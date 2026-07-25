@@ -7,7 +7,7 @@ const pptxgen = require("pptxgenjs");
 const path = require("path");
 
 const pres = new pptxgen();
-pres.layout = "LAYOUT_WIDE"; // 13.3" × 7.5"
+pres.layout = "LAYOUT_WIDE"; // 14.3" × 7.5"
 pres.author = "尹红艳";
 pres.title = "CreditMind · AI 信贷风控大脑";
 
@@ -36,7 +36,7 @@ function addFooter(slide, pageNum) {
   slide.addText("CreditMind · AI 信贷风控大脑", {
     x: 0.5, y: 7.0, w: 6, h: 0.3, fontSize: 9, color: C.muted, fontFace: F.body, margin: 0,
   });
-  slide.addText(`${pageNum} / 13`, {
+  slide.addText(`${pageNum} / 15`, {
     x: 12.3, y: 7.0, w: 0.5, h: 0.3, fontSize: 9, color: C.muted, align: "right", margin: 0,
   });
 }
@@ -217,11 +217,43 @@ s5.addText("🔒 合规红线：AI 不直接放款，不使用 grade/sub_grade �
   x: 0.6, y: 6.2, w: 12.1, h: 0.55, fontSize: 14, fontFace: F.body, color: C.white, bold: true, align: "center", valign: "middle", margin: 0,
 });
 
-// ========== Slide 6: 竞品对比实验 ⭐ ==========
+// ========== Slide 6: 四类竞品全景 ==========
 let s6 = pres.addSlide();
 s6.background = { color: C.offWhite };
-addTitleBar(s6, "竞品对比实验 ⭐", 6);
-s6.addText("在 LendingClub 15 万条数据上对比三种方法论 · A/B/C AUC、特征数、泄露风险、PSI 稳定性", {
+addTitleBar(s6, "四类竞品全景", 6);
+s6.addText("调研前先看四类竞品，确保 CreditMind 的差异化定位站得住脚", {
+  x: 0.6, y: 1.0, w: 12, h: 0.4, fontSize: 14, fontFace: F.body, color: C.muted, margin: 0,
+});
+
+const cats = [
+  { tag: "A", title: "大厂对公尽调 Agent", sub: "看「天花板」", rep: "TRAE / 中电金信 / 云从 / 腾讯云", cap: "面向对公贷，多模态采集(OCR/语音)，依赖大厂基础设施", color: C.navy },
+  { tag: "B", title: "海外 AI 信贷风控 Agent", sub: "看产品形态", rep: "Underwrite.ai / Zentis / LendingIQ / digiqt", cap: "承保/尽调/违约预测分层；已有分级决策概念", color: C.teal },
+  { tag: "C", title: "开源 LendingClub 违约预测", sub: "看模型层竞品", rep: "navyaneel / shashi-hue", cap: "方法论差异：IV/WoE、PSI、数据泄露防护", color: C.midnight },
+  { tag: "D", title: "智能信贷报告 SaaS", sub: "看商业模式", rep: "金锋报 FinDoc / 达观 Agent", cap: "报告自动生成，开箱即用网页版，对公客户经理", color: C.accent },
+];
+cats.forEach((c, i) => {
+  const col = i % 2;
+  const row = Math.floor(i / 2);
+  const x = 0.6 + col * 6.3;
+  const y = 1.6 + row * 2.6;
+  s6.addShape(pres.shapes.RECTANGLE, {
+    x: x, y: y, w: 6.0, h: 2.4, fill: { color: C.white }, line: { color: C.light, width: 1 },
+    shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
+  });
+  s6.addShape(pres.shapes.RECTANGLE, { x: x, y: y, w: 0.12, h: 2.4, fill: { color: c.color }, line: { type: "none" } });
+  s6.addShape(pres.shapes.OVAL, { x: x + 0.3, y: y + 0.3, w: 0.7, h: 0.7, fill: { color: c.color }, line: { type: "none" } });
+  s6.addText(c.tag, { x: x + 0.3, y: y + 0.3, w: 0.7, h: 0.7, fontSize: 24, fontFace: F.header, color: C.white, bold: true, align: "center", valign: "middle", margin: 0 });
+  s6.addText(c.title, { x: x + 1.2, y: y + 0.32, w: 4.6, h: 0.5, fontSize: 17, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+  s6.addText(c.sub, { x: x + 1.2, y: y + 0.82, w: 4.6, h: 0.3, fontSize: 11, fontFace: F.body, color: C.accent, bold: true, margin: 0 });
+  s6.addText("代表：" + c.rep, { x: x + 0.3, y: y + 1.25, w: 5.5, h: 0.4, fontSize: 11, fontFace: F.body, color: C.dark, margin: 0 });
+  s6.addText(c.cap, { x: x + 0.3, y: y + 1.65, w: 5.5, h: 0.6, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
+});
+
+// ========== Slide 7: 竞品对比实验 ⭐ ==========
+let s7 = pres.addSlide();
+s7.background = { color: C.offWhite };
+addTitleBar(s7, "竞品对比实验 ⭐", 7);
+s7.addText("在 LendingClub 15 万条数据上对比三种方法论 · A/B/C AUC、特征数、泄露风险、PSI 稳定性", {
   x: 0.6, y: 1.0, w: 12, h: 0.4, fontSize: 14, fontFace: F.body, color: C.muted, margin: 0,
 });
 
@@ -256,7 +288,7 @@ const tableData = [
     { text: "✅ 已验证", options: { fontSize: 14, color: C.green, align: "center", valign: "middle", bold: true, fill: { color: "DBEAFE" } } },
   ],
 ];
-s6.addTable(tableData, {
+s7.addTable(tableData, {
   x: 0.6, y: 1.6, w: 12.1, h: 2.8,
   colW: [4.3, 1.7, 1.5, 2.0, 2.6],
   border: { pt: 1, color: C.light },
@@ -265,12 +297,12 @@ s6.addTable(tableData, {
 
 // 插入对比图
 const imgPath = path.join(__dirname, "experiments", "results", "comparison_overview.png");
-s6.addImage({ path: imgPath, x: 1.5, y: 4.7, w: 10.3, h: 2.2, sizing: { type: "contain", w: 10.3, h: 2.2 } });
+s7.addImage({ path: imgPath, x: 1.5, y: 4.7, w: 10.3, h: 2.2, sizing: { type: "contain", w: 10.3, h: 2.2 } });
 
-// ========== Slide 7: 三大护城河 ==========
-let s7 = pres.addSlide();
-s7.background = { color: C.offWhite };
-addTitleBar(s7, "三大护城河", 7);
+// ========== Slide 8: 三大护城河 ==========
+let s8 = pres.addSlide();
+s8.background = { color: C.offWhite };
+addTitleBar(s8, "三大护城河", 8);
 
 const moats = [
   { num: "1", title: "方法论深度", desc: "唯一把「IV/WoE → PSI → 贪心去共线性 → 四套方案」完整工程化的项目", color: C.navy },
@@ -279,30 +311,30 @@ const moats = [
 ];
 moats.forEach((m, i) => {
   const y = 1.5 + i * 1.6;
-  s7.addShape(pres.shapes.RECTANGLE, {
+  s8.addShape(pres.shapes.RECTANGLE, {
     x: 1, y: y, w: 11.3, h: 1.35, fill: { color: C.white }, line: { color: C.light, width: 1 },
     shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
   });
-  s7.addShape(pres.shapes.OVAL, {
+  s8.addShape(pres.shapes.OVAL, {
     x: 1.3, y: y + 0.3, w: 0.75, h: 0.75, fill: { color: m.color }, line: { type: "none" },
   });
-  s7.addText(m.num, { x: 1.3, y: y + 0.3, w: 0.75, h: 0.75, fontSize: 28, fontFace: F.header, color: C.white, bold: true, align: "center", valign: "middle", margin: 0 });
-  s7.addText(m.title, { x: 2.3, y: y + 0.2, w: 9.5, h: 0.5, fontSize: 20, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-  s7.addText(m.desc, { x: 2.3, y: y + 0.7, w: 9.5, h: 0.55, fontSize: 14, fontFace: F.body, color: C.muted, margin: 0 });
+  s8.addText(m.num, { x: 1.3, y: y + 0.3, w: 0.75, h: 0.75, fontSize: 28, fontFace: F.header, color: C.white, bold: true, align: "center", valign: "middle", margin: 0 });
+  s8.addText(m.title, { x: 2.3, y: y + 0.2, w: 9.5, h: 0.5, fontSize: 20, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+  s8.addText(m.desc, { x: 2.3, y: y + 0.7, w: 9.5, h: 0.55, fontSize: 14, fontFace: F.body, color: C.muted, margin: 0 });
 });
 
-// ========== Slide 8: 违约预测模型深度 ==========
-let s8 = pres.addSlide();
-s8.background = { color: C.offWhite };
-addTitleBar(s8, "违约预测模型深度", 8);
+// ========== Slide 9: 违约预测模型深度 ==========
+let s9 = pres.addSlide();
+s9.background = { color: C.offWhite };
+addTitleBar(s9, "违约预测模型深度", 9);
 
 // 左半：方法论 + 模型架构
-s8.addShape(pres.shapes.RECTANGLE, {
+s9.addShape(pres.shapes.RECTANGLE, {
   x: 0.5, y: 1.2, w: 6.2, h: 4.5, fill: { color: C.white }, line: { color: C.light, width: 1 },
   shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
 });
-s8.addShape(pres.shapes.RECTANGLE, { x: 0.5, y: 1.2, w: 0.1, h: 4.5, fill: { color: C.accent }, line: { type: "none" } });
-s8.addText("方法论", { x: 0.75, y: 1.35, w: 5.9, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s9.addShape(pres.shapes.RECTANGLE, { x: 0.5, y: 1.2, w: 0.1, h: 4.5, fill: { color: C.accent }, line: { type: "none" } });
+s9.addText("方法论", { x: 0.75, y: 1.35, w: 5.9, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
 
 const methods = [
   { tag: "①", title: "IV 信息价值筛选", desc: "IV≥0.02，剔除预测力弱或无业务意义特征" },
@@ -313,17 +345,17 @@ const methods = [
 ];
 methods.forEach((m, i) => {
   const y = 1.85 + i * 0.78;
-  s8.addText(m.tag, { x: 0.8, y: y, w: 0.5, h: 0.6, fontSize: 22, fontFace: F.header, color: C.accent, bold: true, margin: 0 });
-  s8.addText(m.title, { x: 1.4, y: y, w: 5.2, h: 0.3, fontSize: 14, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-  s8.addText(m.desc, { x: 1.4, y: y + 0.3, w: 5.2, h: 0.45, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
+  s9.addText(m.tag, { x: 0.8, y: y, w: 0.5, h: 0.6, fontSize: 22, fontFace: F.header, color: C.accent, bold: true, margin: 0 });
+  s9.addText(m.title, { x: 1.4, y: y, w: 5.2, h: 0.3, fontSize: 14, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+  s9.addText(m.desc, { x: 1.4, y: y + 0.3, w: 5.2, h: 0.45, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
 });
 
 // 左下：相对 V1/V2 的改进（迁移 DianJin 数据处理 skill）
-s8.addShape(pres.shapes.RECTANGLE, {
+s9.addShape(pres.shapes.RECTANGLE, {
   x: 0.5, y: 5.85, w: 6.2, h: 0.95, fill: { color: "F0F9FF" }, line: { color: C.accent, width: 1 },
 });
-s8.addText("相对原模型的改进（迁移 DianJin skill）", { x: 0.65, y: 5.9, w: 6.0, h: 0.25, fontSize: 11, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-s8.addText([
+s9.addText("相对原模型的改进（迁移 DianJin skill）", { x: 0.65, y: 5.9, w: 6.0, h: 0.25, fontSize: 11, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s9.addText([
   { text: "V1.ipynb ", options: { fontSize: 9, color: C.muted } },
   { text: "相关性排序 → 贪心去共线\n", options: { fontSize: 9, color: C.dark } },
   { text: "V2.md     ", options: { fontSize: 9, color: C.muted } },
@@ -333,13 +365,13 @@ s8.addText([
 ], { x: 0.65, y: 6.15, w: 6.0, h: 0.6, fontFace: F.body, valign: "top", margin: 0 });
 
 // 右半上：模型架构
-s8.addShape(pres.shapes.RECTANGLE, {
+s9.addShape(pres.shapes.RECTANGLE, {
   x: 7.0, y: 1.2, w: 5.8, h: 2.5, fill: { color: C.white }, line: { color: C.light, width: 1 },
   shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
 });
-s8.addShape(pres.shapes.RECTANGLE, { x: 7.0, y: 1.2, w: 0.1, h: 2.5, fill: { color: C.navy }, line: { type: "none" } });
-s8.addText("模型架构", { x: 7.25, y: 1.35, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-s8.addText([
+s9.addShape(pres.shapes.RECTANGLE, { x: 7.0, y: 1.2, w: 0.1, h: 2.5, fill: { color: C.navy }, line: { type: "none" } });
+s9.addText("模型架构", { x: 7.25, y: 1.35, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s9.addText([
   { text: "算法    ", options: { fontSize: 12, color: C.muted } },
   { text: "XGBoost 梯度提升树\n", options: { fontSize: 13, color: C.dark, bold: true } },
   { text: "特征数  ", options: { fontSize: 12, color: C.muted } },
@@ -355,12 +387,12 @@ s8.addText([
 ], { x: 7.25, y: 1.8, w: 5.5, h: 1.85, fontFace: F.body, valign: "top", margin: 0 });
 
 // 右半下：Top6 特征 IV 榜
-s8.addShape(pres.shapes.RECTANGLE, {
+s9.addShape(pres.shapes.RECTANGLE, {
   x: 7.0, y: 3.95, w: 5.8, h: 2.85, fill: { color: C.white }, line: { color: C.light, width: 1 },
   shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
 });
-s8.addShape(pres.shapes.RECTANGLE, { x: 7.0, y: 3.95, w: 0.1, h: 2.85, fill: { color: C.teal }, line: { type: "none" } });
-s8.addText("Top 6 特征 IV 榜", { x: 7.25, y: 4.05, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s9.addShape(pres.shapes.RECTANGLE, { x: 7.0, y: 3.95, w: 0.1, h: 2.85, fill: { color: C.teal }, line: { type: "none" } });
+s9.addText("Top 6 特征 IV 榜", { x: 7.25, y: 4.05, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
 
 const topFeats = [
   ["int_rate", "0.398", "贷款利率"],
@@ -372,25 +404,25 @@ const topFeats = [
 ];
 topFeats.forEach((f, i) => {
   const y = 4.55 + i * 0.36;
-  s8.addText(`${i + 1}. ${f[0]}`, { x: 7.25, y: y, w: 2.4, h: 0.32, fontSize: 12, fontFace: F.body, color: C.dark, bold: true, margin: 0 });
-  s8.addText(`IV=${f[1]}`, { x: 9.65, y: y, w: 1.2, h: 0.32, fontSize: 12, fontFace: F.body, color: C.accent, bold: true, margin: 0 });
-  s8.addText(f[2], { x: 10.85, y: y, w: 1.85, h: 0.32, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
+  s9.addText(`${i + 1}. ${f[0]}`, { x: 7.25, y: y, w: 2.4, h: 0.32, fontSize: 12, fontFace: F.body, color: C.dark, bold: true, margin: 0 });
+  s9.addText(`IV=${f[1]}`, { x: 9.65, y: y, w: 1.2, h: 0.32, fontSize: 12, fontFace: F.body, color: C.accent, bold: true, margin: 0 });
+  s9.addText(f[2], { x: 10.85, y: y, w: 1.85, h: 0.32, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
 });
 
-// ========== Slide 9: SHAP 可解释性 ==========
-let s9 = pres.addSlide();
-s9.background = { color: C.offWhite };
-addTitleBar(s9, "可解释性：SHAP Top3", 9);
+// ========== Slide 10: SHAP 可解释性 ==========
+let s10 = pres.addSlide();
+s10.background = { color: C.offWhite };
+addTitleBar(s10, "可解释性：SHAP Top3", 10);
 
 const shapPath = path.join(__dirname, "experiments", "results", "shap_top15.png");
-s9.addImage({ path: shapPath, x: 0.6, y: 1.3, w: 7.5, h: 5.2, sizing: { type: "contain", w: 7.5, h: 5.2 } });
+s10.addImage({ path: shapPath, x: 0.6, y: 1.3, w: 7.5, h: 5.2, sizing: { type: "contain", w: 7.5, h: 5.2 } });
 
-s9.addShape(pres.shapes.RECTANGLE, {
+s10.addShape(pres.shapes.RECTANGLE, {
   x: 8.5, y: 1.3, w: 4.2, h: 5.2, fill: { color: C.white }, line: { color: C.light, width: 1 },
   shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
 });
-s9.addText("示例解读", { x: 8.7, y: 1.5, w: 3.8, h: 0.4, fontSize: 16, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-s9.addText([
+s10.addText("示例解读", { x: 8.7, y: 1.5, w: 3.8, h: 0.4, fontSize: 16, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s10.addText([
   { text: '"这位借款人违约概率 72%\n\n', options: { fontSize: 13, color: C.dark } },
   { text: "主要风险因子：\n", options: { fontSize: 13, color: C.dark, bold: true } },
   { text: "1. int_rate（利率）13.5%\n   — 高于平均，平台已识别较高风险\n\n", options: { fontSize: 12, color: C.muted } },
@@ -399,12 +431,12 @@ s9.addText([
   { text: '建议话术：\'根据您的信用状况，建议降低申请金额或提供担保\'"', options: { fontSize: 12, color: C.accent, italic: true } },
 ], { x: 8.7, y: 2.0, w: 3.8, h: 4.3, fontFace: F.body, valign: "top", margin: 0 });
 
-// ========== Slide 10: Demo 演示 ==========
-let s10 = pres.addSlide();
-s10.background = { color: C.midnight };
-s10.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
-s10.addText("现场 Demo", { x: 0.6, y: 0.4, w: 12, h: 0.7, fontSize: 32, fontFace: F.header, color: C.white, bold: true, margin: 0 });
-s10.addText("35 岁深圳电商老板借 20 万", { x: 0.6, y: 1.1, w: 12, h: 0.5, fontSize: 18, fontFace: F.body, color: C.accent, margin: 0 });
+// ========== Slide 11: Demo 演示 ==========
+let s11 = pres.addSlide();
+s11.background = { color: C.midnight };
+s11.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
+s11.addText("现场 Demo", { x: 0.6, y: 0.4, w: 12, h: 0.7, fontSize: 32, fontFace: F.header, color: C.white, bold: true, margin: 0 });
+s11.addText("35 岁深圳电商老板借 20 万", { x: 0.6, y: 1.1, w: 12, h: 0.5, fontSize: 18, fontFace: F.body, color: C.accent, margin: 0 });
 
 const demoSteps = [
   { step: "1", title: "启动 Agent", desc: "输入客户基本信息" },
@@ -414,17 +446,88 @@ const demoSteps = [
 ];
 demoSteps.forEach((d, i) => {
   const y = 2.0 + i * 1.1;
-  s10.addShape(pres.shapes.OVAL, { x: 1, y: y, w: 0.7, h: 0.7, fill: { color: C.accent }, line: { type: "none" } });
-  s10.addText(d.step, { x: 1, y: y, w: 0.7, h: 0.7, fontSize: 24, fontFace: F.header, color: C.midnight, bold: true, align: "center", valign: "middle", margin: 0 });
-  s10.addText(d.title, { x: 2, y: y, w: 4, h: 0.35, fontSize: 18, fontFace: F.body, color: C.white, bold: true, margin: 0 });
-  s10.addText(d.desc, { x: 2, y: y + 0.35, w: 8, h: 0.35, fontSize: 14, fontFace: F.body, color: C.light, margin: 0 });
+  s11.addShape(pres.shapes.OVAL, { x: 1, y: y, w: 0.7, h: 0.7, fill: { color: C.accent }, line: { type: "none" } });
+  s11.addText(d.step, { x: 1, y: y, w: 0.7, h: 0.7, fontSize: 24, fontFace: F.header, color: C.midnight, bold: true, align: "center", valign: "middle", margin: 0 });
+  s11.addText(d.title, { x: 2, y: y, w: 4, h: 0.35, fontSize: 18, fontFace: F.body, color: C.white, bold: true, margin: 0 });
+  s11.addText(d.desc, { x: 2, y: y + 0.35, w: 8, h: 0.35, fontSize: 14, fontFace: F.body, color: C.light, margin: 0 });
 });
-s10.addText("预期时长：5-10 分钟", { x: 0.6, y: 6.5, w: 12, h: 0.4, fontSize: 14, fontFace: F.body, color: C.accent, italic: true, margin: 0 });
+s11.addText("Demo 视频：2 分钟（35 岁深圳电商老板借 20 万 · 4 步完整流程）", { x: 0.6, y: 6.5, w: 12, h: 0.4, fontSize: 14, fontFace: F.body, color: C.accent, italic: true, margin: 0 });
 
-// ========== Slide 11: Roadmap ==========
-let s11 = pres.addSlide();
-s11.background = { color: C.offWhite };
-addTitleBar(s11, "Roadmap", 11);
+// ========== Slide 12: 项目价值证明 ==========
+let s12 = pres.addSlide();
+s12.background = { color: C.offWhite };
+addTitleBar(s12, "项目价值证明", 12);
+s12.addShape(pres.shapes.RECTANGLE, {
+  x: 0.6, y: 1.0, w: 12.1, h: 0.7, fill: { color: C.midnight }, line: { type: "none" },
+});
+s12.addText([
+  { text: "差异化定位为什么站得住脚？ ", options: { fontSize: 15, color: C.white, bold: true } },
+  { text: "方法论证据 × 工程化证据 × 商业化证据 三重闭环", options: { fontSize: 15, color: C.accent } },
+], { x: 0.8, y: 1.0, w: 11.7, h: 0.7, fontFace: F.body, valign: "middle", margin: 0 });
+
+const proofs = [
+  {
+    tag: "①", title: "方法论证据", sub: "量化对比实验（15 万行 LendingClub）",
+    color: C.navy,
+    items: [
+      "AUC 0.7093 · 与 81 特征 baseline 相当",
+      "19 特征 = A(17) 少 1 个，B(81) 减 76.5%",
+      "IV/WoE + PSI 双验证，28 特征全部 PSI<0.25",
+      "明确排除 grade/sub_grade 数据泄露",
+      "结论：少即是多，方法论决定一切",
+    ],
+  },
+  {
+    tag: "②", title: "工程化证据", sub: "对标 4 类竞品 + 可复现 Demo",
+    color: C.teal,
+    items: [
+      "A 大厂对公：多模态采集但闭源",
+      "B 海外 Agent：已有分级决策概念",
+      "C 开源项目：navyaneel/shashi-hue 直接对标",
+      "D 报告 SaaS：商业模式可借鉴",
+      "CreditMind：唯一 Agent 闭环 + IV/PSI 工程",
+    ],
+  },
+  {
+    tag: "③", title: "商业化证据", sub: "用户价值 + 投资人逻辑",
+    color: C.midnight,
+    items: [
+      "单笔尽调 2h → 15min（效率提升 8x）",
+      "每个判断都有据可查（SHAP + IV）",
+      "合规边界：AI 不放款，只做建议+人审",
+      "目标客户：消费贷/P2P 客户经理",
+      "Phase 2：FastAPI+Docker 企业级部署",
+    ],
+  },
+];
+proofs.forEach((p, i) => {
+  const x = 0.6 + i * 4.2;
+  s12.addShape(pres.shapes.RECTANGLE, {
+    x: x, y: 1.9, w: 3.9, h: 4.0, fill: { color: C.white }, line: { color: C.light, width: 1 },
+    shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
+  });
+  s12.addShape(pres.shapes.RECTANGLE, { x: x, y: 1.9, w: 3.9, h: 0.7, fill: { color: p.color }, line: { type: "none" } });
+  s12.addText(p.tag + " " + p.title, { x: x + 0.2, y: 1.9, w: 3.5, h: 0.7, fontSize: 16, fontFace: F.body, color: C.white, bold: true, valign: "middle", margin: 0 });
+  s12.addText(p.sub, { x: x + 0.2, y: 2.7, w: 3.5, h: 0.4, fontSize: 11, fontFace: F.body, color: C.muted, italic: true, margin: 0 });
+  p.items.forEach((it, j) => {
+    s12.addText("• " + it, { x: x + 0.2, y: 3.2 + j * 0.5, w: 3.5, h: 0.45, fontSize: 12, fontFace: F.body, color: C.dark, margin: 0 });
+  });
+});
+
+s12.addShape(pres.shapes.RECTANGLE, {
+  x: 0.6, y: 6.1, w: 12.1, h: 0.75, fill: { color: "F0F9FF" }, line: { color: C.accent, width: 1 },
+});
+s12.addText([
+  { text: "对投资人：", options: { fontSize: 13, color: C.midnight, bold: true } },
+  { text: "方法论 + 量化对比 + 工程闭环 → 可复制、可扩展的 AI 风控基础设施    ", options: { fontSize: 13, color: C.dark } },
+  { text: "对用户：", options: { fontSize: 13, color: C.midnight, bold: true } },
+  { text: "2h→15min + 每个判断有据可查 + 合规人审兜底", options: { fontSize: 13, color: C.dark } },
+], { x: 0.8, y: 6.1, w: 11.7, h: 0.75, fontFace: F.body, valign: "middle", margin: 0 });
+
+// ========== Slide 13: Roadmap ==========
+let s13 = pres.addSlide();
+s13.background = { color: C.offWhite };
+addTitleBar(s13, "Roadmap", 13);
 
 const phases = [
   { title: "Phase 1: MVP", time: "5 天（模块四+五）", items: ["单轮输入 + Agent 访谈", "模型推理 + 报告生成", "Streamlit Web Demo", "3 个预设 Case"], color: C.navy, status: "✅ 已完成" },
@@ -433,30 +536,30 @@ const phases = [
 ];
 phases.forEach((p, i) => {
   const x = 0.6 + i * 4.2;
-  s11.addShape(pres.shapes.RECTANGLE, {
+  s13.addShape(pres.shapes.RECTANGLE, {
     x: x, y: 1.5, w: 3.9, h: 4.5, fill: { color: C.white }, line: { color: C.light, width: 1 },
     shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
   });
-  s11.addShape(pres.shapes.RECTANGLE, { x: x, y: 1.5, w: 3.9, h: 0.6, fill: { color: p.color }, line: { type: "none" } });
-  s11.addText(p.title, { x: x + 0.2, y: 1.5, w: 3.5, h: 0.6, fontSize: 16, fontFace: F.body, color: C.white, bold: true, valign: "middle", margin: 0 });
-  s11.addText(p.time, { x: x + 0.2, y: 2.2, w: 3.5, h: 0.35, fontSize: 12, fontFace: F.body, color: C.muted, margin: 0 });
+  s13.addShape(pres.shapes.RECTANGLE, { x: x, y: 1.5, w: 3.9, h: 0.6, fill: { color: p.color }, line: { type: "none" } });
+  s13.addText(p.title, { x: x + 0.2, y: 1.5, w: 3.5, h: 0.6, fontSize: 16, fontFace: F.body, color: C.white, bold: true, valign: "middle", margin: 0 });
+  s13.addText(p.time, { x: x + 0.2, y: 2.2, w: 3.5, h: 0.35, fontSize: 12, fontFace: F.body, color: C.muted, margin: 0 });
   p.items.forEach((it, j) => {
-    s11.addText("• " + it, { x: x + 0.2, y: 2.7 + j * 0.45, w: 3.5, h: 0.4, fontSize: 13, fontFace: F.body, color: C.dark, margin: 0 });
+    s13.addText("• " + it, { x: x + 0.2, y: 2.7 + j * 0.45, w: 3.5, h: 0.4, fontSize: 13, fontFace: F.body, color: C.dark, margin: 0 });
   });
-  s11.addShape(pres.shapes.RECTANGLE, { x: x + 0.2, y: 5.4, w: 3.5, h: 0.4, fill: { color: C.offWhite }, line: { type: "none" } });
-  s11.addText(p.status, { x: x + 0.2, y: 5.4, w: 3.5, h: 0.4, fontSize: 13, fontFace: F.body, color: p.color, bold: true, align: "center", valign: "middle", margin: 0 });
+  s13.addShape(pres.shapes.RECTANGLE, { x: x + 0.2, y: 5.4, w: 3.5, h: 0.4, fill: { color: C.offWhite }, line: { type: "none" } });
+  s13.addText(p.status, { x: x + 0.2, y: 5.4, w: 3.5, h: 0.4, fontSize: 13, fontFace: F.body, color: p.color, bold: true, align: "center", valign: "middle", margin: 0 });
 });
 
-s11.addText("Phase 2 会进一步丰富信贷特征工程与多模态采集，覆盖更多消费贷细分场景。", {
+s13.addText("Phase 2 会进一步丰富信贷特征工程与多模态采集，覆盖更多消费贷细分场景。", {
   x: 0.6, y: 6.3, w: 12.1, h: 0.4, fontSize: 13, fontFace: F.body, color: C.muted, italic: true, align: "center", margin: 0,
 });
 
-// ========== Slide 12: 诚实短板与 Ask ==========
-let s12 = pres.addSlide();
-s12.background = { color: C.offWhite };
-addTitleBar(s12, "诚实短板与 Ask", 12);
+// ========== Slide 14: 诚实短板与 Ask ==========
+let s14 = pres.addSlide();
+s14.background = { color: C.offWhite };
+addTitleBar(s14, "诚实短板与 Ask", 14);
 
-s12.addText("已知短板（主动说明）", { x: 0.6, y: 1.2, w: 6, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s14.addText("已知短板（主动说明）", { x: 0.6, y: 1.2, w: 6, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
 const shortcomings = [
   { issue: "数据规模 15 万行", plan: "接 2007-2019 全量" },
   { issue: "特征衍生深度不足", plan: "加衍生特征工程层" },
@@ -465,12 +568,12 @@ const shortcomings = [
 ];
 shortcomings.forEach((s, i) => {
   const y = 1.7 + i * 0.7;
-  s12.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: y, w: 5.8, h: 0.6, fill: { color: C.white }, line: { color: C.light, width: 1 } });
-  s12.addText(s.issue, { x: 0.8, y: y, w: 3, h: 0.6, fontSize: 13, fontFace: F.body, color: C.red, valign: "middle", margin: 0 });
-  s12.addText("→ " + s.plan, { x: 3.8, y: y, w: 2.5, h: 0.6, fontSize: 13, fontFace: F.body, color: C.green, valign: "middle", margin: 0 });
+  s14.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: y, w: 5.8, h: 0.6, fill: { color: C.white }, line: { color: C.light, width: 1 } });
+  s14.addText(s.issue, { x: 0.8, y: y, w: 3, h: 0.6, fontSize: 13, fontFace: F.body, color: C.red, valign: "middle", margin: 0 });
+  s14.addText("→ " + s.plan, { x: 3.8, y: y, w: 2.5, h: 0.6, fontSize: 13, fontFace: F.body, color: C.green, valign: "middle", margin: 0 });
 });
 
-s12.addText("Ask", { x: 7, y: 1.2, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s14.addText("Ask", { x: 7, y: 1.2, w: 5.5, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
 const asks = [
   "Agent × 风控 的产品化路径，特别是合规边界设计",
   "IV/WoE+PSI 方法论在生产环境的工程化最佳实践",
@@ -478,22 +581,22 @@ const asks = [
 ];
 asks.forEach((a, i) => {
   const y = 1.7 + i * 1.0;
-  s12.addShape(pres.shapes.RECTANGLE, { x: 7, y: y, w: 5.7, h: 0.85, fill: { color: C.midnight }, line: { type: "none" } });
-  s12.addText(`${i + 1}. ${a}`, { x: 7.2, y: y, w: 5.3, h: 0.85, fontSize: 14, fontFace: F.body, color: C.white, valign: "middle", margin: 0 });
+  s14.addShape(pres.shapes.RECTANGLE, { x: 7, y: y, w: 5.7, h: 0.85, fill: { color: C.midnight }, line: { type: "none" } });
+  s14.addText(`${i + 1}. ${a}`, { x: 7.2, y: y, w: 5.3, h: 0.85, fontSize: 14, fontFace: F.body, color: C.white, valign: "middle", margin: 0 });
 });
 
-// ========== Slide 13: 致谢 ==========
-let s13 = pres.addSlide();
-s13.background = { color: C.midnight };
-s13.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
-s13.addShape(pres.shapes.RECTANGLE, { x: 0, y: 7.35, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
-s13.addText("感谢各位导师点评！", { x: 1, y: 2.0, w: 11.3, h: 1.0, fontSize: 44, fontFace: F.header, color: C.white, bold: true, align: "center", margin: 0 });
-s13.addShape(pres.shapes.LINE, { x: 5, y: 3.3, w: 3.3, h: 0, line: { color: C.accent, width: 2 } });
-s13.addText("CreditMind · AI 信贷风控大脑", { x: 1, y: 3.6, w: 11.3, h: 0.5, fontSize: 22, fontFace: F.header, color: C.accent, align: "center", margin: 0 });
-s13.addText("让消费贷尽调从 2 小时压缩到 15 分钟，且每个判断都有据可查。", {
+// ========== Slide 15: 致谢 ==========
+let s15 = pres.addSlide();
+s15.background = { color: C.midnight };
+s15.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
+s15.addShape(pres.shapes.RECTANGLE, { x: 0, y: 7.35, w: 13.3, h: 0.15, fill: { color: C.accent }, line: { type: "none" } });
+s15.addText("感谢各位导师点评！", { x: 1, y: 2.0, w: 11.3, h: 1.0, fontSize: 44, fontFace: F.header, color: C.white, bold: true, align: "center", margin: 0 });
+s15.addShape(pres.shapes.LINE, { x: 5, y: 3.3, w: 3.3, h: 0, line: { color: C.accent, width: 2 } });
+s15.addText("CreditMind · AI 信贷风控大脑", { x: 1, y: 3.6, w: 11.3, h: 0.5, fontSize: 22, fontFace: F.header, color: C.accent, align: "center", margin: 0 });
+s15.addText("让消费贷尽调从 2 小时压缩到 15 分钟，且每个判断都有据可查。", {
   x: 1, y: 4.2, w: 11.3, h: 0.5, fontSize: 16, fontFace: F.body, color: C.light, italic: true, align: "center", margin: 0,
 });
-s13.addText("尹红艳 · 2026-07-25", { x: 1, y: 5.5, w: 11.3, h: 0.4, fontSize: 16, fontFace: F.body, color: C.white, align: "center", margin: 0 });
+s15.addText("尹红艳 · 2026-07-25", { x: 1, y: 5.5, w: 11.3, h: 0.4, fontSize: 16, fontFace: F.body, color: C.white, align: "center", margin: 0 });
 
 // ========== 生成文件 ==========
 pres.writeFile({ fileName: "CreditMind-Pitch-Deck.pptx" }).then(() => {
