@@ -73,7 +73,7 @@ FEATURE_META = {
     "mo_sin_rcnt_rev_tl_op": {"type": "float", "unit": "月", "desc": "最近开循环账户距今年月", "question": "您最近一次开信用卡是几个月前？"},
     "mo_sin_old_rev_tl_op": {"type": "float", "unit": "月", "desc": "最早开循环账户距今年月", "question": "您最早开的一张信用卡是几个月前？"},
     "mths_since_recent_bc": {"type": "float", "unit": "月", "desc": "最近开信用卡距今月数", "question": "您最近一次开信用卡距今几个月？"},
-    "verification_status": {"type": "cat", "categories": ["Verified", "Source Verified", "Not Verified"], "desc": "收入验证状态", "question": "您的收入是否经过平台或第三方验证？"},
+    "verification_status": {"type": "cat", "categories": ["Verified", "Source Verified", "Not Verified"], "yes_value": "Source Verified", "no_value": "Not Verified", "desc": "收入验证状态", "question": "您的收入是否经过平台或第三方验证？"},
     "inq_last_6mths": {"type": "int", "unit": "次", "desc": "6个月内查询次数", "question": "过去 6 个月您的征信被查询过几次？"},
     "emp_length": {"type": "float", "unit": "年", "desc": "工作年限", "question": "您在当前雇主工作多少年了？（<1 年填 0）"},
     "mths_since_recent_inq": {"type": "float", "unit": "月", "desc": "最近查询距今月数", "question": "您最近一次被查询征信是几个月前？"},
@@ -372,6 +372,8 @@ class CreditMindModel:
                 "unit": meta.get("unit", ""),
                 "question": meta.get("question", f"请输入 {f}："),
                 "categories": meta.get("categories"),
+                "yes_value": meta.get("yes_value"),
+                "no_value": meta.get("no_value"),
             })
         return template
 

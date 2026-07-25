@@ -113,37 +113,71 @@ class InterviewAgent:
         """用户回答后，Agent 处理并返回下一轮。"""
         self.dialogue.append({"role": "user", "content": user_input})
 
-        # 抽取当前问题的答案
-        if self.current_idx < len(self.template):
-            t = self.template[self.current_idx]
-            value = self._extract_value(user_input, t)
-            if value is not None:
-                self.collected[t["feature"]] = value
-                self.current_idx += 1
+        if self.current_idx >= len(self.template):
+            response = "访谈已完成，正在生成尽调报告..."
+            self.dialogue.append({"role": "assistant", "content": response})
+            return response
 
-        # LLM 生成自然回应 + 下一问题（如果可用）
-        if self.llm.available and self.current_idx < len(self.template):
-            response = self._llm_respond(user_input)
-        else:
-            # 降级：直接返回下一问题
+        t = self.template[self.current_idx]
+        value = self._extract_value(user_input, t)
+
+        if value is not None:
+            # 抽取成功 → 记录并推进
+            self.collected[t["feature"]] = value
+            self.current_idx += 1
             collected_count = len([v for v in self.collected.values() if v not in (None, "")])
-            response = f"已记录（已采集 {collected_count}/{len(self.template)} 项）。\n\n{self._next_question()}"
+            label = self._value_label(t, value)
+            if self.llm.available and self.current_idx < len(self.template):
+                response = self._llm_respond(user_input, recorded=f"{t['desc']} = {label}")
+            elif self.current_idx >= len(self.template):
+                response = f"✅ 已记录：{t['desc']} = {label}。\n\n访谈已完成，正在生成尽调报告..."
+            else:
+                next_q = self._next_question()
+                response = (
+                    f"✅ 已记录：{t['desc']} = {label}"
+                    f"（已采集 {collected_count}/{len(self.template)} 项）。\n\n{next_q}"
+                )
+        else:
+            # 抽取失败 → 不推进，提示重答
+            hint = self._extract_hint(t)
+            response = f"⚠️ 未能识别您的回答。{hint}\n\n{self._next_question()}"
 
         self.dialogue.append({"role": "assistant", "content": response})
         return response
 
-    def _llm_respond(self, user_input: str) -> str:
-        """用 LLM 生成自然回应。"""
+    def _value_label(self, t: dict, value: Any) -> str:
+        """把内部存储值转为可读标签（推荐回答展示用）。"""
+        if t.get("type") == "cat":
+            cats = t.get("categories") or []
+            if isinstance(value, int) and 0 <= value < len(cats):
+                return cats[value]
+            return str(value)
+        unit = t.get("unit", "")
+        return f"{value}{unit}" if unit else str(value)
+
+    def _extract_hint(self, t: dict) -> str:
+        """抽取失败时的重答提示。"""
+        if t.get("yes_value") and t.get("no_value"):
+            return f"请回答「是」（{t['yes_value']}）或「否」（{t['no_value']}）。"
+        cats = t.get("categories") or []
+        if cats:
+            return f"可选值：{' / '.join(cats)}"
+        return "请用数字回答。"
+
+    def _llm_respond(self, user_input: str, recorded: str = "") -> str:
+        """用 LLM 生成自然回应，并体现已记录的字段与取值。"""
         t = self.template[self.current_idx] if self.current_idx < len(self.template) else None
         next_q = t["question"] if t else "访谈已完成"
 
         system = (
             "你是 CreditMind 智能访谈助手，正在对一位借款人做贷前访谈。"
-            "你的任务：1) 简短确认客户回答；2) 问下一个问题。"
-            "要求：每次回复不超过 80 字，语气专业友好，不要重复客户的话。"
+            "你的任务：1) 简短确认客户刚才的回答（提及已记录的字段与取值）；"
+            "2) 问下一个问题。"
+            "要求：每次回复不超过 80 字，语气专业友好，不要重复客户的原话。"
         )
         user_msg = (
             f"客户刚才回答：{user_input}\n"
+            f"已记录的字段与取值：{recorded}\n"
             f"下一个要问的问题是：{next_q}\n"
             f"请生成回复。"
         )
@@ -154,7 +188,7 @@ class InterviewAgent:
         resp = self.llm.chat(messages)
         if not resp:
             collected = len([v for v in self.collected.values() if v not in (None, "")])
-            resp = f"好的，已记录（{collected}/{len(self.template)}）。\n\n{next_q}"
+            resp = f"✅ 已记录：{recorded}（已采集 {collected}/{len(self.template)} 项）。\n\n{next_q}"
         return resp
 
     def _extract_value(self, text: str, template: dict) -> Any:
@@ -169,13 +203,23 @@ class InterviewAgent:
                 if c.lower() in text.lower():
                     # 返回 category code（与 preprocess 一致）
                     return cats.index(c)
-            # 宽松匹配
+            # 是否类问题：yes/no 关键词映射到 yes_value/no_value
+            yv, nv = template.get("yes_value"), template.get("no_value")
+            if yv is not None and nv is not None and cats:
+                tl = text.lower()
+                yes_kw = ["是", "yes", "y", "对", "有", "经过", "已验证", "验证过", "已经过", "确认", "confirmed", "verified", "通过"]
+                no_kw = ["否", "no", "n", "没", "未", "不", "not", "无"]
+                if any(k in tl for k in yes_kw):
+                    return cats.index(yv) if yv in cats else (cats.index(nv) if nv in cats else None)
+                if any(k in tl for k in no_kw):
+                    return cats.index(nv) if nv in cats else (cats.index(yv) if yv in cats else None)
+            # 宽松匹配（住房所有权等）
             text_lower = text.lower()
-            if "rent" in text_lower or "租房" in text:
+            if "rent" in text_lower or "租房" in text_lower:
                 return 0
-            if "mortgage" in text_lower or "按揭" in text or "房贷" in text:
+            if "mortgage" in text_lower or "按揭" in text_lower or "房贷" in text_lower:
                 return 1
-            if "own" in text_lower or "自有" in text:
+            if "own" in text_lower or "自有" in text_lower:
                 return 2
             return None
 
