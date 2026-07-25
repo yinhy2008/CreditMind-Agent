@@ -114,4 +114,28 @@
 
 ---
 
+## 附录 · 推理链路技术详解（评委深挖用）
+
+CreditMind 的推理是"预训练 + 前向预测"，**不联网、不调 LLM**，纯加载模型做预测。完整链路如下：
+
+**1. 模型加载（离线）**
+`python model_server.py train` 完成特征工程（IV/WoE 筛选 → 贪心去共线性）与 XGBoost 训练，产出 `artifacts/creditmind_xgb.json` 与 `feature_meta.json`（含 19 特征顺序、AUC）。推理时 `CreditMindModel.get()` 单例加载，全局只加载一次。XGBoost 对量纲不敏感，故直接喂原始数值，无需 scaler。
+
+**2. 特征对齐（`predict`）**
+用户 / 访谈 Agent 给出的 19 特征，按训练固定顺序拼成单行 DataFrame；缺失或空值补 `0.0`。
+
+**3. 违约概率**
+`model.predict_proba(X)[0, 1]` 取正类（违约 = 1）的后验概率，即"违约概率"（如 0.046 → 4.6%）。
+
+**4. 风险等级（硬编码阈值）**
+概率 → 三档：`<0.30` 低风险、`0.30–0.60` 中风险、`≥0.60` 高风险。阈值系业务设定，非数据学习得到。
+
+**5. SHAP 解释（`explain`）**
+复用 `predict` 的概率与等级，再用 `shap.TreeExplainer` 算每个特征边际贡献，取绝对值 Top-K（默认 3）作"主要风险驱动因子"，符号决定"推高 / 降低"违约，并生成自然语言解读。
+
+三模式（预设 Case / 手动输入 / 访谈）点"推理"均走 `CreditMindModel.get().explain(feats)`，统一产出：**违约概率 + 风险等级 + SHAP 因子**。
+关键代码：`model_server.py` 的 `CreditMindModel.predict`（`294` 行起）与 `explain`（`320` 行起）。
+
+---
+
 *文档更新：v0.2（2026-07-25）· 由 v0.1 的 13 页 / 8 分钟 改为 15 页 / 5 分钟 + 2 分钟视频 · 作者：尹红艳*
