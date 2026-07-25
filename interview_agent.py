@@ -79,6 +79,11 @@ class InterviewAgent:
         self.dialogue = []
         self.current_idx = 0
 
+    @property
+    def features(self) -> list:
+        """访谈模板中的全部特征名（顺序与模型一致）。"""
+        return [t["feature"] for t in self.template]
+
     def start(self, customer_info: dict) -> str:
         """启动访谈，返回开场白。"""
         self.reset()
