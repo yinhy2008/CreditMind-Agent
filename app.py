@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import streamlit as st
 
-from model_server import CreditMindModel
+from model_server import CreditMindModel, FEATURE_META
 from cases import CASES, list_cases
 from report_generator import generate_report
 from extractor import validate_features
@@ -162,10 +162,28 @@ elif mode == "✏️ 手动输入特征":
     feats = {}
     col1, col2, col3 = st.columns(3)
     cols = [col1, col2, col3]
+    # 分类特征的中文友好展示（value 仍为英文 code，与模型编码一致）
+    CAT_CN = {
+        "RENT": "租房", "MORTGAGE": "按揭购房", "OWN": "自有住房", "OTHER": "其他",
+        "Verified": "已验证", "Source Verified": "第三方已验证", "Not Verified": "未验证",
+    }
     for i, fname in enumerate(model.features):
+        meta = FEATURE_META.get(fname, {})
+        label = meta.get("desc", fname)        # 业务含义，而非后台字段名
+        unit = meta.get("unit", "")
         with cols[i % 3]:
-            val = st.number_input(f"{fname}", value=0.0, format="%.2f", key=f"input_{fname}")
-            feats[fname] = val
+            if meta.get("type") == "cat":
+                cats = meta.get("categories", [])
+                cn_opts = [CAT_CN.get(c, c) for c in cats]
+                sel = st.selectbox(label, options=cn_opts, key=f"input_{fname}_cat")
+                feats[fname] = cats.index(cats[cn_opts.index(sel)])
+            else:
+                help_text = f"单位：{unit}" if unit else None
+                val = st.number_input(
+                    label, value=0.0, format="%.2f",
+                    key=f"input_{fname}", help=help_text,
+                )
+                feats[fname] = val
 
     if st.button("🔮 推理", type="primary"):
         # 校验
