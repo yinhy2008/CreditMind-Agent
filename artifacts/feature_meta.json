@@ -1,0 +1,46 @@
+{
+  "final_features": [
+    "int_rate",
+    "term_months",
+    "tot_hi_cred_lim",
+    "loan_amnt",
+    "open_rv_24m",
+    "home_ownership",
+    "mort_acc",
+    "total_bc_limit",
+    "num_tl_op_past_12m",
+    "mo_sin_rcnt_rev_tl_op",
+    "mo_sin_old_rev_tl_op",
+    "mths_since_recent_bc",
+    "verification_status",
+    "inq_last_6mths",
+    "emp_length",
+    "mths_since_recent_inq",
+    "inq_last_12m",
+    "annual_inc",
+    "mo_sin_old_il_acct"
+  ],
+  "iv_top15": {
+    "loan_amnt": 0.05601814666379859,
+    "funded_amnt": 0.05601814666379859,
+    "funded_amnt_inv": 0.05585346330158759,
+    "int_rate": 0.39798476679884387,
+    "installment": 0.05494640307670978,
+    "emp_length": 0.026819313238852227,
+    "home_ownership": 0.03861222602042216,
+    "annual_inc": 0.022131708530437874,
+    "verification_status": 0.027261414190734856,
+    "purpose": 0.010269100972479153,
+    "addr_state": 0.009955738430156923,
+    "dti": 0.009034100994443947,
+    "delinq_2yrs": 9.63046823578657e-05,
+    "inq_last_6mths": 0.02725489012882438,
+    "mths_since_last_delinq": 0.0012155840037571869
+  },
+  "auc": 0.7092710577586383,
+  "psi_summary": {
+    "stable": 28,
+    "mild_drift": 0,
+    "significant_drift": 0
+  }
+}
