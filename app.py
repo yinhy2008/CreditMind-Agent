@@ -129,19 +129,22 @@ if mode == "📋 预设 Case 演示":
 
     col1, col2, col3 = st.columns(3)
     case_list = list_cases()
-    selected = None
 
     for i, (col, c) in enumerate(zip([col1, col2, col3], case_list)):
         with col:
             risk_emoji = {"低风险": "🟢", "中风险": "🟡", "高风险": "🔴"}[c["expected_risk"]]
             if st.button(f"{risk_emoji} {c['name']}\n{c['profile'][:20]}...", key=f"case_{c['id']}"):
-                selected = c["id"]
+                # 切换到不同 Case 时才清空上一次的推理 / 报告
+                if st.session_state.get("selected_case_id") != c["id"]:
+                    st.session_state.case_pred = None
+                    st.session_state.case_report = None
+                    st.session_state.selected_case_id = c["id"]
+
+    # 已选中的 Case 存于 session_state，跨 rerun 保留
+    selected = st.session_state.get("selected_case_id")
 
     if selected:
         case = CASES[selected]
-        # 切换 case 时清空上一次的推理 / 报告
-        st.session_state.case_pred = None
-        st.session_state.case_report = None
         st.divider()
         st.header(f"📄 Case: {case['name']}")
 
