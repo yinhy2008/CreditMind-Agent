@@ -78,6 +78,9 @@ class InterviewAgent:
         self.collected = {}
         self.dialogue = []
         self.current_idx = 0
+        self.phase = "purpose"   # 访谈两阶段：先问贷款用途，再采集 19 项特征
+        self.purpose = None
+        self.customer_meta = {}
 
     @property
     def features(self) -> list:
@@ -87,22 +90,27 @@ class InterviewAgent:
     def start(self, customer_info: dict) -> str:
         """启动访谈，返回开场白。"""
         self.reset()
-        # 记录客户基本信息
+        # 记录客户基础信息（非特征字段，如 name / loan_amnt 由前端预填）
+        feature_names = [t["feature"] for t in self.template]
         for k, v in customer_info.items():
-            if k in [t["feature"] for t in self.template]:
+            if k in feature_names:
                 self.collected[k] = v
+            else:
+                self.customer_meta[k] = v
 
         opening = (
             f"您好！我是 CreditMind 智能访谈助手。"
-            f"接下来我会问您 {len(self.template)} 个问题，大约需要 5-10 分钟。"
+            f"接下来我会先了解您的贷款用途，再问您 {len(self.template)} 个问题，大约需要 5-10 分钟。"
             f"请您如实回答，我们会严格保护您的个人信息。"
             f"\n\n让我们开始吧。"
         )
-        self.dialogue.append({"role": "assistant", "content": opening})
-
-        # 第一个问题
-        first_q = self._next_question()
-        return f"{opening}\n\n{first_q}"
+        # 阶段 1：先问贷款用途（非模型特征，但报告需要）
+        purpose_q = (
+            "【补充信息】请问您申请这笔贷款的用途是什么？"
+            "（例如：经营周转、装修、购车、教育、消费等）"
+        )
+        self.dialogue.append({"role": "assistant", "content": opening + "\n\n" + purpose_q})
+        return f"{opening}\n\n{purpose_q}"
 
     def _next_question(self) -> str:
         """返回下一个未采集特征的问题。"""
@@ -117,6 +125,15 @@ class InterviewAgent:
     def chat(self, user_input: str) -> str:
         """用户回答后，Agent 处理并返回下一轮。"""
         self.dialogue.append({"role": "user", "content": user_input})
+
+        # 阶段 1：采集贷款用途
+        if self.phase == "purpose":
+            self.purpose = user_input.strip() or "未说明"
+            self.phase = "features"
+            first_q = self._next_question()
+            response = f"✅ 已记录您的贷款用途：{self.purpose}。\n\n{first_q}"
+            self.dialogue.append({"role": "assistant", "content": response})
+            return response
 
         if self.current_idx >= len(self.template):
             response = "访谈已完成，正在生成尽调报告..."
@@ -264,6 +281,12 @@ class InterviewAgent:
     def get_features(self) -> dict:
         """返回已采集的特征（供模型推理）。"""
         return dict(self.collected)
+
+    def get_customer_info(self) -> dict:
+        """返回报告所需的客户基础信息（含访谈采集的贷款用途）。"""
+        info = dict(self.customer_meta)
+        info["purpose"] = self.purpose or "未说明"
+        return info
 
 
 # ------------------------------------------------------------------

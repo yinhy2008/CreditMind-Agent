@@ -286,10 +286,10 @@ elif mode == "💬 Agent 访谈模拟":
     if not st.session_state.agent_started:
         cust_name = st.text_input("客户姓名", value="张三")
         loan_amnt = st.number_input("申请金额（元）", value=200000, step=10000)
-        purpose = st.text_input("贷款用途", value="经营周转")
 
         if st.button("🚀 启动访谈", type="primary"):
-            opening = agent.start({"loan_amnt": loan_amnt})
+            # 姓名与申请金额作为基础信息传入；贷款用途由 Agent 在访谈中询问
+            opening = agent.start({"name": cust_name, "loan_amnt": loan_amnt})
             st.session_state.messages.append({"role": "assistant", "content": opening})
             st.session_state.agent_started = True
             st.rerun()
@@ -330,7 +330,7 @@ elif mode == "💬 Agent 访谈模拟":
                     feats0 = st.session_state.interview_feats
                     pred0 = st.session_state.interview_pred
                     report = generate_report(
-                        customer_info={"name": "访谈客户", "loan_amnt": feats0.get("loan_amnt", 0)},
+                        customer_info=agent.get_customer_info(),
                         features=feats0,
                         prediction=pred0,
                         dialogue_summary="\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[:10]]),
