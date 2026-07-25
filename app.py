@@ -196,6 +196,15 @@ elif mode == "✏️ 手动输入特征":
         with st.spinner("推理中..."):
             pred = model.explain(feats)
 
+        # 保存推理结果到 session_state，供下方结果区与报告按钮使用
+        st.session_state.manual_pred = pred
+        st.session_state.manual_feats = dict(feats)
+        st.session_state.manual_report = None
+        st.rerun()
+
+    # 推理结果展示（推理后持久可见）
+    pred = st.session_state.get("manual_pred")
+    if pred is not None:
         prob_pct = pred["default_probability"] * 100
         risk_emoji = {"低风险": "🟢", "中风险": "🟡", "高风险": "🔴"}[pred["risk_level"]]
 
@@ -216,6 +225,27 @@ elif mode == "✏️ 手动输入特征":
             })
         if shap_data:
             st.table(shap_data)
+
+        # 生成尽调报告（与访谈模式一致）
+        if st.button("📝 生成尽调报告", type="primary"):
+            feats0 = st.session_state.manual_feats
+            pred0 = st.session_state.manual_pred
+            report = generate_report(
+                customer_info={"name": "手动录入客户", "loan_amnt": feats0.get("loan_amnt", 0)},
+                features=feats0,
+                prediction=pred0,
+                dialogue_summary="（手动录入特征值，无访谈对话）",
+            )
+            st.session_state.manual_report = report
+            st.rerun()
+
+        if st.session_state.get("manual_report"):
+            st.markdown(st.session_state.manual_report)
+            st.download_button(
+                "⬇️ 下载报告",
+                st.session_state.manual_report,
+                file_name="creditmind_manual_report.md",
+            )
 
 
 # ------------------------------------------------------------------
