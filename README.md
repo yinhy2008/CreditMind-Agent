@@ -37,10 +37,10 @@ CreditMind 是面向消费贷/P2P 场景的「智能访谈 + 违约预测 + 可�
 | `04-ai-intervention-points.md` | AI 介入点说明 |
 | `05-mvp-features.md` | MVP 功能清单 |
 | `06-prd-v0.1.md` | PRD v0.1 |
-| `07-pitch-deck-v0.1.md` | 路演 PPT 大纲 |
+| `07-pitch-deck-v0.1.md` | 5 分钟演讲脚本（15 页 / 5 分钟 + 2 分钟视频） |
 | **`08-business-plan.md`** | **商业计划书（BP）** |
 | **`09-demo-video-script.md`** | **Demo 视频录制脚本** |
-| `CreditMind-Pitch-Deck.pptx` | 13 页路演 PPT |
+| `CreditMind-Pitch-Deck.pptx` | 15 页路演 PPT |
 
 ---
 
@@ -103,10 +103,11 @@ CreditMind/
 ├── 04-ai-intervention-points.md # AI 介入点说明
 ├── 05-mvp-features.md           # MVP 功能清单
 ├── 06-prd-v0.1.md               # PRD v0.1
-├── 07-pitch-deck-v0.1.md        # 路演材料初稿
+├── 07-pitch-deck-v0.1.md        # 5 分钟演讲脚本（15页）
 ├── 08-business-plan.md          # 商业计划书（BP）
-├── 09-demo-video-script.md      # Demo 视频录制脚本
-├── CreditMind-Pitch-Deck.pptx   # 13 页路演 PPT
+├── 09-demo-video-script.md      # Demo 视频录制脚本（2 分钟版）
+├── CreditMind-Pitch-Deck.pptx   # 15 页路演 PPT
+├── demo/                        # 录制好的 Demo 视频（CreditMind-Demo.mp4）
 └── README.md                    # 本文件
 ```
 
@@ -166,16 +167,17 @@ export LLM_MODEL=deepseek-chat
 
 ---
 
-## 路演演示流程
+## 路演演示流程（5 分钟 PPT + 2 分钟视频）
 
-1. **开场**（30 秒）：自我介绍 + 一句话定位
-2. **痛点**（1 分钟）：客户经理单笔尽调 1-2 小时
-3. **解决方案**（1 分钟）：三层联动（访谈+推理+报告）
-4. **竞品对比实验**（2 分钟）：少即是多的金句
-5. **Demo 演示**（2 分钟）：选张伟 Case 现场演示
-6. **护城河 + Roadmap + Ask**（1.5 分钟）
+1. **开场 + 定位**（0:25）：自我介绍 + 一句话定位
+2. **痛点**（0:35）：客户经理单笔尽调 1-2 小时
+3. **解决方案 + AI 点**（0:35）：三层联动（访谈+推理+报告）
+4. **四类竞品全景 + 对比实验**（1:10）：少即是多的金句 ⭐核心
+5. **护城河 + 模型/SHAP + 价值证明**（1:25）
+6. **Demo 视频**（2:00）：播放 `demo/CreditMind-Demo.mp4`（张伟 Case 完整流程）
+7. **Roadmap + 短板 + Ask + 致谢**（1:05）
 
-详见 `07-pitch-deck-v0.1.md`。
+逐字稿与卡点详见 `07-pitch-deck-v0.1.md`，视频录制脚本详见 `09-demo-video-script.md`。
 
 ---
 
