@@ -24,6 +24,7 @@ import streamlit as st
 from model_server import CreditMindModel, FEATURE_META
 from cases import CASES, list_cases
 from report_generator import generate_report
+from report_pdf import markdown_to_pdf
 from extractor import validate_features
 
 
@@ -187,14 +188,18 @@ if mode == "📋 预设 Case 演示":
                     dialogue_summary=f"客户 {case['name']}，{case['profile']}。",
                 )
                 st.session_state.case_report = report
+                st.session_state.case_report_pdf = markdown_to_pdf(report)
                 st.rerun()
 
             if st.session_state.get("case_report"):
                 st.divider()
                 st.subheader("📄 尽调报告")
                 st.markdown(st.session_state.case_report)
-                st.download_button("下载报告 (Markdown)", st.session_state.case_report,
+                c1, c2 = st.columns(2)
+                c1.download_button("⬇️ 下载报告 (Markdown)", st.session_state.case_report,
                                    file_name=f"creditmind_report_{selected}.md")
+                c2.download_button("📄 下载报告 (PDF)", st.session_state.case_report_pdf,
+                                   file_name=f"creditmind_report_{selected}.pdf", mime="application/pdf")
 
 
 # ------------------------------------------------------------------
@@ -258,14 +263,22 @@ elif mode == "✏️ 手动输入特征":
                 dialogue_summary="（手动录入特征值，无访谈对话）",
             )
             st.session_state.manual_report = report
+            st.session_state.manual_report_pdf = markdown_to_pdf(report)
             st.rerun()
 
         if st.session_state.get("manual_report"):
             st.markdown(st.session_state.manual_report)
-            st.download_button(
-                "⬇️ 下载报告",
+            m1, m2 = st.columns(2)
+            m1.download_button(
+                "⬇️ 下载报告 (Markdown)",
                 st.session_state.manual_report,
                 file_name="creditmind_manual_report.md",
+            )
+            m2.download_button(
+                "📄 下载报告 (PDF)",
+                st.session_state.manual_report_pdf,
+                file_name="creditmind_manual_report.pdf",
+                mime="application/pdf",
             )
 
 
@@ -339,14 +352,18 @@ elif mode == "💬 Agent 访谈模拟":
                         dialogue_summary="\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[:10]]),
                     )
                     st.session_state.interview_report = report
+                    st.session_state.interview_report_pdf = markdown_to_pdf(report)
                     st.rerun()
 
                 if st.session_state.get("interview_report"):
                     st.divider()
                     st.subheader("📄 尽调报告")
                     st.markdown(st.session_state.interview_report)
-                    st.download_button("下载报告", st.session_state.interview_report,
+                    i1, i2 = st.columns(2)
+                    i1.download_button("⬇️ 下载报告 (Markdown)", st.session_state.interview_report,
                                        file_name="creditmind_interview_report.md")
+                    i2.download_button("📄 下载报告 (PDF)", st.session_state.interview_report_pdf,
+                                       file_name="creditmind_interview_report.pdf", mime="application/pdf")
         else:
             # 用户输入
             user_input = st.chat_input("请回答问题...")
