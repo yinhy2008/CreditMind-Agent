@@ -298,10 +298,10 @@ addTitleBar(s8, "违约预测模型深度", 8);
 
 // 左半：方法论 + 模型架构
 s8.addShape(pres.shapes.RECTANGLE, {
-  x: 0.5, y: 1.2, w: 6.2, h: 5.6, fill: { color: C.white }, line: { color: C.light, width: 1 },
+  x: 0.5, y: 1.2, w: 6.2, h: 4.5, fill: { color: C.white }, line: { color: C.light, width: 1 },
   shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 },
 });
-s8.addShape(pres.shapes.RECTANGLE, { x: 0.5, y: 1.2, w: 0.1, h: 5.6, fill: { color: C.accent }, line: { type: "none" } });
+s8.addShape(pres.shapes.RECTANGLE, { x: 0.5, y: 1.2, w: 0.1, h: 4.5, fill: { color: C.accent }, line: { type: "none" } });
 s8.addText("方法论", { x: 0.75, y: 1.35, w: 5.9, h: 0.4, fontSize: 18, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
 
 const methods = [
@@ -312,11 +312,25 @@ const methods = [
   { tag: "⑤", title: "数据泄露防护", desc: "明确排除 grade / sub_grade 等放款后字段" },
 ];
 methods.forEach((m, i) => {
-  const y = 1.85 + i * 0.95;
-  s8.addText(m.tag, { x: 0.8, y: y, w: 0.5, h: 0.7, fontSize: 24, fontFace: F.header, color: C.accent, bold: true, margin: 0 });
-  s8.addText(m.title, { x: 1.4, y: y, w: 5.2, h: 0.35, fontSize: 15, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
-  s8.addText(m.desc, { x: 1.4, y: y + 0.35, w: 5.2, h: 0.55, fontSize: 12, fontFace: F.body, color: C.muted, margin: 0 });
+  const y = 1.85 + i * 0.78;
+  s8.addText(m.tag, { x: 0.8, y: y, w: 0.5, h: 0.6, fontSize: 22, fontFace: F.header, color: C.accent, bold: true, margin: 0 });
+  s8.addText(m.title, { x: 1.4, y: y, w: 5.2, h: 0.3, fontSize: 14, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+  s8.addText(m.desc, { x: 1.4, y: y + 0.3, w: 5.2, h: 0.45, fontSize: 11, fontFace: F.body, color: C.muted, margin: 0 });
 });
+
+// 左下：相对 V1/V2 的改进（迁移 DianJin 数据处理 skill）
+s8.addShape(pres.shapes.RECTANGLE, {
+  x: 0.5, y: 5.85, w: 6.2, h: 0.95, fill: { color: "F0F9FF" }, line: { color: C.accent, width: 1 },
+});
+s8.addText("相对原模型的改进（迁移 DianJin skill）", { x: 0.65, y: 5.9, w: 6.0, h: 0.25, fontSize: 11, fontFace: F.body, color: C.midnight, bold: true, margin: 0 });
+s8.addText([
+  { text: "V1.ipynb ", options: { fontSize: 9, color: C.muted } },
+  { text: "相关性排序 → 贪心去共线\n", options: { fontSize: 9, color: C.dark } },
+  { text: "V2.md     ", options: { fontSize: 9, color: C.muted } },
+  { text: "IV/WoE+PSI+四套方案+SafetyGate\n", options: { fontSize: 9, color: C.dark } },
+  { text: "CreditMind", options: { fontSize: 9, color: C.accent, bold: true } },
+  { text: " 工程化精选 19 特征 + Agent 推理 + SHAP 双解释 + 泄露排除", options: { fontSize: 9, color: C.dark } },
+], { x: 0.65, y: 6.15, w: 6.0, h: 0.6, fontFace: F.body, valign: "top", margin: 0 });
 
 // 右半上：模型架构
 s8.addShape(pres.shapes.RECTANGLE, {
