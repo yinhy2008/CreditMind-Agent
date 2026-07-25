@@ -36,6 +36,26 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+# 中文字体兜底：尝试系统中文字体，找不到则降级到英文标题
+try:
+    from matplotlib import font_manager
+    cn_fonts = ["PingFang SC", "Heiti SC", "STHeiti", "Microsoft YaHei",
+                "SimHei", "Noto Sans CJK SC", "Arial Unicode MS", "WenQuanYi Micro Hei"]
+    available = {f.name for f in font_manager.fontManager.ttflist}
+    chosen = next((f for f in cn_fonts if f in available), None)
+    if chosen:
+        plt.rcParams["font.sans-serif"] = [chosen, "DejaVu Sans"]
+        plt.rcParams["axes.unicode_minus"] = False
+        HAS_CN = True
+    else:
+        HAS_CN = False
+except Exception:
+    HAS_CN = False
+
+def cn(s, fallback):
+    """返回中文（若系统支持中文字体），否则返回英文兜底"""
+    return s if HAS_CN else fallback
 import numpy as np
 import pandas as pd
 import xgboost as xgb
@@ -435,13 +455,13 @@ def plot_comparison(summary: pd.DataFrame):
     colors = ["#e74c3c", "#f39c12", "#27ae60"]
 
     axes[0].bar(models, aucs, color=colors, edgecolor="black")
-    axes[0].set_title("AUC-ROC 对比")
+    axes[0].set_title(cn("AUC-ROC 对比", "AUC-ROC Comparison"))
     axes[0].set_ylim(0.5, max(aucs) * 1.05)
     for i, v in enumerate(aucs):
         axes[0].text(i, v + 0.005, f"{v:.4f}", ha="center", fontweight="bold")
 
     axes[1].bar(models, nfeats, color=colors, edgecolor="black")
-    axes[1].set_title("特征数对比（少即是多）")
+    axes[1].set_title(cn("特征数对比（少即是多）", "Feature Count (Less is More)"))
     for i, v in enumerate(nfeats):
         axes[1].text(i, v + 1, str(v), ha="center", fontweight="bold")
 
