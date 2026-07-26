@@ -29,3 +29,11 @@ Thumbs.db
 
 # Large raw data (the LendingClub CSV is referenced by path, not committed)
 *.csv
+
+# Demo videos (large mp4/mov, kept local; presenter narrates live during pitch)
+demo/*.mp4
+demo/*.mov
+# Demo recording logs & test report artifacts (not part of the repo)
+demo/record.log
+demo/creditmind_report_*.md
+demo/creditmind_report_*.pdf
