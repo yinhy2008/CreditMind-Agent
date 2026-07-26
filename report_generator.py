@@ -18,11 +18,38 @@ from typing import Any
 from model_server import CreditMindModel, FEATURE_META
 
 
+# 3 个预设 Case 的 SHAP 详细解读（基于真实模型推理结果固化，供路演 Demo 稳定展示）
+# 当 generate_report 收到 case_id 且命中此处时，自然语言段用专属解读替换动态 narration
+CASE_SHAP_INTERPRETATION: dict[str, str] = {
+    "low_risk": (
+        "该借款人违约概率仅 4.6%，处于低风险区间。三大关键因子中，**贷款利率 6.0%** 是最强的保护因子"
+        "（SHAP −1.62），银行给予的低利率定价本身即反映其信用资质优良；**年收入 80 万元**（SHAP −0.29）"
+        "进一步压低违约概率，收入对负债的覆盖充足。唯一推高风险的是**申请金额 10 万元**（SHAP +0.49），"
+        "但其正向贡献远小于两项负向贡献，故最终落在低风险。结论：信用底子扎实、收入稳定，可进入快速审批通道。"
+    ),
+    "medium_risk": (
+        "该借款人违约概率 36.8%，处于中风险区间。Top1 驱动因子是**申请借款金额 15 万元**（SHAP +0.48），"
+        "金额偏大使月供压力上升，是拉高违约概率的主因。两项保护因子——**贷款期限 36 个月**（SHAP −0.23，"
+        "中期比长期更可控）与**信用卡总额度 8 万元**（SHAP −0.16，反映银行体系对其信用评估正面）——部分抵消了"
+        "金额的正向贡献，但不足以将其压回低风险。结论：信用底子不差、期限合理，唯独借款金额偏大是真正的拉分项；"
+        "建议人工复核，可考虑压缩金额至 10 万元附近或补充收入/资产证明。"
+    ),
+    "high_risk": (
+        "该借款人违约概率高达 87.2%，处于高风险区间。三大关键因子**全部推高风险**，且无任何保护因子进入 Top3。"
+        "Top1 是**贷款利率 24.5%**（SHAP +0.56），银行给予的接近上限的高利率定价本身就是强风险信号；"
+        "**申请金额 30 万元**（SHAP +0.48）叠加 **60 个月长期限**（SHAP +0.38），月供与总利息双重压力使违约可能性"
+        "显著放大。结论：利率、金额、期限三项同步高位，风险信号高度一致；建议谨慎处理，可要求增加担保人或抵押物，"
+        "风险不可接受时拒绝申请。"
+    ),
+}
+
+
 def generate_report(
     customer_info: dict,
     features: dict,
     prediction: dict,
     dialogue_summary: str = "",
+    case_id: str | None = None,
 ) -> str:
     """生成 Markdown 尽调报告。
 
@@ -31,6 +58,8 @@ def generate_report(
         features: 19 项特征 JSON
         prediction: model.explain() 的返回结果
         dialogue_summary: 对话摘要（可选）
+        case_id: 预设 Case 标识（low_risk / medium_risk / high_risk）；
+            命中时自然语言段使用固化的 SHAP 详细解读，保证 Demo 展示稳定
 
     Returns:
         Markdown 格式的尽调报告
@@ -40,6 +69,10 @@ def generate_report(
     level = prediction["risk_level"]
     shap_top = prediction.get("shap_top", [])
     narration = prediction.get("narration", "")
+    # 预设 Case 命中时使用固化的 SHAP 详细解读，否则用模型动态 narration
+    interpretation = CASE_SHAP_INTERPRETATION.get(case_id) if case_id else narration
+    if not interpretation:
+        interpretation = narration
 
     # 风险建议
     if level == "低风险":
@@ -108,7 +141,7 @@ def generate_report(
 
 ### 自然语言解读
 
-{narration}
+{interpretation}
 
 ---
 

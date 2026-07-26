@@ -186,6 +186,7 @@ if mode == "📋 预设 Case 演示":
                     features=feats,
                     prediction=pred,
                     dialogue_summary=f"客户 {case['name']}，{case['profile']}。",
+                    case_id=selected,
                 )
                 st.session_state.case_report = report
                 st.session_state.case_report_pdf = markdown_to_pdf(report)
